@@ -62,7 +62,6 @@ Updated count: 1
 
 
 
-
 ## Project Motivation
 
 Explore data while learning some Python basics like branching and repetition.

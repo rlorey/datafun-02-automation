@@ -1,7 +1,7 @@
 """src/datafun/app.py - Project script.
 
-Author: Denise Case
-Date: 2026-08-20
+Author: Rebecca Lorey
+Date: 2026-08-31
 
 HOW TO RUN THIS FILE:
 
@@ -151,13 +151,15 @@ def main() -> None:
     # Store the tabular pandas DataFrame returned
     # in a local variable named `df`.
 
-    df: pd.DataFrame = pd.read_csv(DATA_FILE_PATH)
+df: pd.DataFrame = pd.read_csv("/Users/rebeccalorey/Repos/datafun-02-automation/data/penguins.csv")
 
-    LOG.info("Data loaded successfully.")
 
-    LOG.info("-------------------------------")
-    LOG.info("02. INSPECT the data.")
-    LOG.info("-------------------------------")
+
+LOG.info("Data loaded successfully.")
+
+LOG.info("-------------------------------")
+LOG.info("02. INSPECT the data.")
+LOG.info("-------------------------------")
 
     # Call the inspect() function to get a string
     # with basic information about the DataFrame.
@@ -165,28 +167,28 @@ def main() -> None:
     # The grain (what one row represents)
     # And the log so it knows where to send messages.
 
-    inspection_string: str = inspect(df=df, grain=GRAIN, log=LOG)
+inspection_string: str = inspect(df=df, grain=GRAIN, log=LOG)
 
-    LOG.info(inspection_string)
+LOG.info(inspection_string)
 
-    LOG.info("-------------------------------")
-    LOG.info("03. REPEAT logic using a for loop.")
-    LOG.info("-------------------------------")
+LOG.info("-------------------------------")
+LOG.info("03. REPEAT logic using a for loop.")
+LOG.info("-------------------------------")
 
     # Get a list of all column names in the DataFrame.
     # Use the DataFrame's `columns` attribute and convert it to a list
     # with the built-in tolist() method.
-    column_names: list[str] = df.columns.tolist()
+column_names: list[str] = df.columns.tolist()
 
     # For each name in the column names list, log its name.
     # Note that we must use a colon at the end of the for loop line.
     # And we must indent the body of the for loop correctly.
-    for name in column_names:
-        LOG.info(f"Column name: {name}")
+for name in column_names:
+    LOG.info(f"Column name: {name}")
 
     # Up above, we choose a column to group by and log the reason for choosing it.
-    LOG.info(f"Selected group column: {GROUP_COLUMN}")
-    LOG.info(f"Reason for choosing this group: {WHY_THIS_GROUP}")
+LOG.info(f"Selected group column: {GROUP_COLUMN}")
+LOG.info(f"Reason for choosing this group: {WHY_THIS_GROUP}")
 
     # Now, let us use Python to get the unique values in the selected group column.
     # Use the df[column name] to get a one-dimensional array of values
@@ -196,11 +198,11 @@ def main() -> None:
     # Once we have that, we can apply the .unique() method to get the unique values.
     # Once we have that, we can apply the .tolist() method to convert
     # the array of unique values into a Python list of strings.
-    unique_list: list[str] = df[GROUP_COLUMN].unique().tolist()
+unique_list: list[str] = df[GROUP_COLUMN].unique().tolist()
 
     # For each unique item in the list, log the value.
-    for item in unique_list:
-        LOG.info(f"Item: {item}")
+for item in unique_list:
+    LOG.info(f"Item: {item}")
 
     LOG.info("-------------------------------")
     LOG.info("04. TRANSFORM one list to another list.")
@@ -289,7 +291,7 @@ def main() -> None:
 
     LOG.info("Starting to process measurements periodically...")
     LOG.info(f"Max records to process: {MAX_RECORDS}")
-    LOG.info(f"Stream wait seconds: {STREAM_WAIT_SECONDS}")
+    #LOG.info(f"Stream wait seconds: {STREAM_WAIT_SECONDS}")
 
     # Initialize the count variable used by the while loop.
     # By convention, counting starts at 0, so the first pass reads row 0.
@@ -298,47 +300,92 @@ def main() -> None:
 
     # Start the while loop to process measurements periodically
     # while the count is less than the maximum number of records.
-    while count < MAX_RECORDS:
-        # Get the measurement from row `count`, which advances each pass.
-        current_measurement: float = df[MEASUREMENT_COLUMN].iloc[count]
-        LOG.info(f"Current {MEASUREMENT_COLUMN}: {current_measurement}")
+ #   while count < MAX_RECORDS:
+ #      # Get the measurement from row `count`, which advances each pass.
+ #       current_measurement: float = df[MEASUREMENT_COLUMN].iloc[count]
+ #       LOG.info(f"Current {MEASUREMENT_COLUMN}: {current_measurement}")
 
-        count += 1
-        LOG.info(f"Updated count: {count}")
+   #     count += 1
+  #      LOG.info(f"Updated count: {count}")
 
-        time.sleep(STREAM_WAIT_SECONDS)
+  #      time.sleep(STREAM_WAIT_SECONDS)
 
-    LOG.info("-------------------------------")
-    LOG.info("07. VISUALIZE the selected measurement.")
-    LOG.info("-------------------------------")
+# Set MAX_RECORDS to the total row count in your dataset
+MAX_RECORDS = len(df)
 
-    LOG.info("Creating a chart to visualize the selected measurement.")
-    LOG.info("We selected one numeric column, so let's look at the distribution.")
+# Initialize counter variable 
+count = 0
+
+while count < MAX_RECORDS:
+    current_measurement: float = df[MEASUREMENT_COLUMN].iloc[count]
+    LOG.info(f"Current {MEASUREMENT_COLUMN}: {current_measurement}")
+
+    # Your classification logic
+    if current_measurement < short_threshold:
+        classification_string: str = "SHORT"
+    elif current_measurement > long_threshold:
+        classification_string: str = "LONG"
+    else:
+        classification_string: str = "MEDIUM"
+
+     # Save classification to the dataframe:
+    df.at[count, "classification"] = classification_string
+    # ADD THIS LINE TO PRINT IT OUT:
+    #LOG.info(f"Bill length classification: {classification_string}")
+        #took the above line out so it wouldn't print each time
+    count += 1
+    LOG.info(f"Updated count: {count}")
+    
+    #time.sleep(STREAM_WAIT_SECONDS)
+
+
+
+LOG.info("-------------------------------")
+LOG.info("07. Show first 5 rows of dataframe including the classification.")
+LOG.info("-------------------------------")
+
+print("\n--- First Five Rows of the Updated DataFrame ---")
+print(df.head())
+
+# Unindented so it runs exactly once AFTER the stream finishes
+print("\n--- Classification Summary Counts ---")
+print(df["classification"].value_counts())
+
+  
+        
+    
+
+LOG.info("-------------------------------")
+LOG.info("08. VISUALIZE the selected measurement.")
+LOG.info("-------------------------------")
+
+LOG.info("Creating a chart to visualize the selected measurement.")
+LOG.info("We selected one numeric column, so let's look at the distribution.")
 
     # Define a path to save the distribution plot.
     # REQUIRED: Use the "docs/images" folder to store generated charts.
-    CHART_PATH = Path("docs/images/measurement-distribution.png")
+CHART_PATH = Path("docs/images/measurement-distribution.png")
 
     # Call an imported function that will show a distribution plot
     # Pass in the pandas DataFrame (df) along with the selected measurement column.
     # It will return a matplotlib Axes object representing the distribution plot.
-    ax = show_numeric_distribution(
+ax = show_numeric_distribution(
         df,
         column=MEASUREMENT_COLUMN,
     )
 
     # call the save_chart() function and pass in the Axes and the path
-    save_chart(ax, CHART_PATH)
-    LOG.info(f"Chart saved successfully at {CHART_PATH}.")
+save_chart(ax, CHART_PATH)
+LOG.info(f"Chart saved successfully at {CHART_PATH}.")
 
-    LOG.info(
+LOG.info(
         "IMPORTANT: Close chart window to continue by clicking its X or close button."
     )
-    plt.show()
+plt.show()
 
-    LOG.info("===================================")
-    LOG.info("END main() - Executed successfully!")
-    LOG.info("===================================")
+LOG.info("===================================")
+LOG.info("END main() - Executed successfully!")
+LOG.info("===================================")
 
 
 # === CONDITIONAL EXECUTION GUARD ===
@@ -347,6 +394,11 @@ def main() -> None:
 # into every Python script. It is a "conditional execution" guard,
 # meaning: if this file is being run as a script, then execute the code
 # in the main() function.
+
+total_rows = len(df)
+print(total_rows)
+
+
 
 if __name__ == "__main__":
     main()
