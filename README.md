@@ -9,6 +9,10 @@
 
 > Professional Python project: automation with loops and branching.
 
+# My Analytics Project
+
+💡 **Note:** This repository was originally cloned from the [denisecase/datafun-02-analytics](https://github.com). I have updated it to include a custom while loop with conditional statements, an appended dataframe, and a summary of penguin bill length classification required for our week 2 deliverable.
+
 # To Run the Module
 uv run python -m datafun.app
 
