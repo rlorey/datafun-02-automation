@@ -11,7 +11,7 @@
 
 # My Analytics Project
 
-💡 **Note:** This repository was originally cloned from the (https://github.com/denisecase/datafun-02-automation). I have updated it to include a custom while loop with conditional statements, an appended dataframe, and a summary of penguin bill length classification required for our week 2 deliverable.
+💡 **Note:** This repository was originally cloned from (https://github.com/denisecase/datafun-02-automation). I have updated it to include a custom while loop with conditional statements, an appended dataframe, and a summary of penguin bill length classification required for our week 2 deliverable.
 
 # To Run the Module
 uv run python -m datafun.app
